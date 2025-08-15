@@ -99,6 +99,26 @@ export const generateSong = inngest.createFunction(
     
     if (credits > 0) {
         //Generate the song
+        await step.run("set-status-processing", async () => {
+            return await db.song.update({
+                where: {
+                    id: songId,
+                },
+                data: {
+                    status: "processing",
+                },
+            });
+        });
+
+        const response = await step.fetch(endpoint, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json",
+                "Modal-Key": env.MODAL_KEY,
+            }
+        })
+        
     } else {
         // Set song status "Not enough credits"
         await step.run("set-status-no-credits", async () => {
