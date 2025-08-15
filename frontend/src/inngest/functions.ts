@@ -57,7 +57,7 @@ export const generateSong = inngest.createFunction(
             seed: song.seed ?? undefined,
             instrumental: song.instrumental ?? undefined,
         };
-
+            // Description of a Song
         if (song.fullDescribedSong) {
             endpoint = env.GENERATE_FROM_DESCRIPTION;
             body = {
@@ -66,6 +66,7 @@ export const generateSong = inngest.createFunction(
             };
         }
         
+        // Custom mode: Lyrics + prompt
         else if (song.lyrics && song.prompt) {
             endpoint = env.GENERATE_FROM_DESCRIBED_LYRICS,
             body = {
@@ -75,6 +76,7 @@ export const generateSong = inngest.createFunction(
             };
         }
 
+            // Custom mode: Prompt + described lyrics
         else if (song.describedLyrics && song.prompt) {
             endpoint = env.GENERATE_FROM_DESCRIBED_LYRICS;
             body = {
