@@ -92,6 +92,25 @@ export const generateSong = inngest.createFunction(
             endpoint: endpoint,
             body: body,
         };
-    });
+    },
+
+    );
+
+    
+    if (credits > 0) {
+        //Generate the song
+    } else {
+        // Set song status "Not enough credits"
+        await step.run("set-status-no-credits", async () => {
+            return await db.song.update({
+                where: {
+                    id: songId,
+                },
+                data: {
+                    status: "no credits",
+                },
+            });
+        });
+    }
   },
 );
