@@ -3,7 +3,21 @@ import { inngest } from "./client";
 import { env } from "~/env";
 
 export const generateSong = inngest.createFunction(
-  { id: "generate-song" },
+  { id: "generate-song", concurrency:{
+    limit: 1,
+    key: "event.data.userId"
+        }, 
+        onFailure: async ({event, error}) => {
+            await db.song.update({
+                where: {
+                    id: event?.data?.event?.data?.songId,
+                },
+                data: {
+                    status: "failed",
+                },
+            });
+        },
+    },
   { event: "generate-song-event" },
   async ({ event, step }) => {
     const{songId} = event.data as {
@@ -119,7 +133,54 @@ export const generateSong = inngest.createFunction(
                 "Modal-Secret": env.MODAL_SECRET,
             },
         });
-        
+
+        await step.run("update-song-result", async() => {
+            const responseData = response.ok ? ((await response.json())as {
+                s3_key: string;
+                cover_image_s3_key: string;
+                categories: string[]
+            }) 
+            : null;
+
+            await db.song.update({
+                where: {
+                    id: songId
+                }, data: {
+                    s3Key: responseData?.s3_key,
+                    thumbnailS3Key: responseData?.cover_image_s3_key,
+                    status: response.ok ? "processed" : "failed",
+                },
+            });
+
+            if (responseData && responseData?.categories.length > 0) {
+                await db.song.update({
+                    where: {id: songId},
+                    data: {
+                        categories: {
+                            connectOrCreate: responseData.categories.map(
+                                (categoryName) =>   ({
+                                    where: {name: categoryName},
+                                    create: {name: categoryName},
+                                }),
+                            ),
+                        },
+                    },
+                });
+            }   
+        });
+
+        return await step.run("deduct-credits", async () => {
+            if (!response.ok) return;
+
+            return await db.user.update({
+                where: {id: userId},
+                data: {
+                    credits:{
+                        decrement: 1,
+                    },
+                },
+            });
+        });
     } else {
         // Set song status "Not enough credits"
         await step.run("set-status-no-credits", async () => {
