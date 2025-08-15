@@ -118,7 +118,7 @@ export const generateSong = inngest.createFunction(
                 "Modal-Key": env.MODAL_KEY,
                 "Modal-Secret": env.MODAL_SECRET,
             },
-        })
+        });
         
     } else {
         // Set song status "Not enough credits"
