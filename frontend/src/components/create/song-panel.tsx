@@ -102,7 +102,7 @@ export function SongPanel() {
                         <label className="text-sm font-medium">Lyrics</label>
                         <div className="flex items-center gap-1">
                             <Button 
-                            variant={lyricsmode === "auto"}
+                            variant={lyricsMode === "auto" ? "secondary" : "ghost"}
                             onClick={() => {
                                 setLyricsMode("auto");
                                 setLyrics("");
