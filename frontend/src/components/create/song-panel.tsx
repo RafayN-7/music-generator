@@ -107,7 +107,7 @@ export function SongPanel() {
                         </div>
                         </div>
                     </div>
-                    </TabsContent>
+                </TabsContent>
             </Tabs>
         </div>
     </div>
