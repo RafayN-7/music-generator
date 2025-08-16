@@ -101,7 +101,10 @@ export function SongPanel() {
                     <div className="flex items-center justify-between">
                         <label className="text-sm font-medium">Lyrics</label>
                         <div className="flex items-center gap-1">
-                            <Button size="sm" className="h-7 text-xs">
+                            <Button onClick={() => {
+                                setLyricsMode("auto");
+                                setLyrics("");
+                            }} size="sm" className="h-7 text-xs">
                                 Auto
                             </Button>
                         </div>
