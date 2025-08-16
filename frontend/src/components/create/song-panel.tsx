@@ -21,6 +21,8 @@ export function SongPanel() {
     const [mode, setMode] = useState<"simple" | "custom">("simple");
     const [description, setDescription] = useState("");
     const [instrumental, setInstrumental] = useState(false);
+    const [lyricsMode, setLyricsMode] = useState<"write" | "auto">("write");
+    const [lyrics, setLyrics] = useState("");
 
     const handleInspirationTagClick = (tag: string) => {
         const currentTags = description
@@ -98,7 +100,11 @@ export function SongPanel() {
                     <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                         <label className="text-sm font-medium">Lyrics</label>
-                        <div className="flex items-center gap-1"></div>
+                        <div className="flex items-center gap-1">
+                            <Button size="sm" className="h-7 text-xs">
+                                Auto
+                            </Button>
+                        </div>
                         </div>
                     </div>
                     </TabsContent>
