@@ -9,6 +9,7 @@ import { Loader2, Music, Plus } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { Badge } from "../ui/badge";
 import { toast } from "sonner";
+import { generateSong, type GenerateRequest } from "~/actions/generation";
 
 const inspirationTags = [
   "80s synth-pop",
@@ -81,7 +82,41 @@ export function SongPanel() {
         }
 
         // Generate Song
-    }; 
+        let requestBody: GenerateRequest;
+
+        if (mode === "simple") {
+            requestBody = {
+                fullDescribedSong: description,
+                instrumental,
+            }
+        } else {
+            const prompt = styleInput;
+            if (lyricsMode === "write") {
+                requestBody = {
+                    prompt,
+                    lyrics,
+                    instrumental,
+                };
+            } else {
+                requestBody = {
+                    prompt,
+                    describedLyrics: lyrics,
+                    instrumental,
+                };
+            }
+            }
+            try {
+                setLoading(true)
+                await generateSong(requestBody);
+                setDescription("");
+                setLyrics("");
+                setStyleInput("");
+            } catch (error) {
+                toast.error("failed to generate song.");
+            } finally {
+                setLoading(false)
+            }
+        }; 
 
     return ( <div className="bg-muted/30 flex w-full flex-col border-r lg:w-80">
         <div className="flex-1 overflow-y-auto p-4">
