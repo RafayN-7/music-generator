@@ -30,7 +30,7 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
     const [searchQuery, setSearchQuery] = useState("");
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [loadingTrackId, setLoadingTrackId] = useState <string | null>(null);
-    const
+    const [trackToRename, SetTrackToRename] =
 
     const handleTrackSelect = async (track: Track) => {
         if (loadingTrackId) return;
