@@ -1,10 +1,11 @@
 "use client"
 
-import { Loader2, Music, RefreshCcw, Search, XCircle } from "lucide-react";
+import { Loader2, Music, Play, RefreshCcw, Search, XCircle } from "lucide-react";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { getPlayUrl } from "~/actions/generation";
+import { Badge } from "../ui/badge";
 
 export interface Track {
                 id: string;
@@ -29,9 +30,14 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
 
     const handleTrackSelect = async (track: Track) => {
         if (loadingTrackId) return;
-        setLoadingTrackId(track.id)
+        setLoadingTrackId(track.id);
         const playUrl = await getPlayUrl(track.id);
-    }
+        setLoadingTrackId(null);
+
+        console.log(playUrl);
+
+        //Play the song in the playbar
+    };
 
     const filteredTracks = tracks.filter((track) => 
         track.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -149,13 +155,44 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
                                             <Music className="text-muted-foreground h-6 w-6"/>
                                         </div>
                                     )}
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
+                                    {loadingTrackId === track.id ? (
+                                        <Loader2 className="animate-spin text-white"/>
+                                    ):( 
+                                    <Play className="text-white fill-white"/>
+                                    )}
+                                    </div>
                                 </div>
+                                    {/*Track Info */}
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="truncate text-sm  font-medium">
+                                            {track.title}
+                                            </h3>
+                                            {track.instrumental && ( 
+                                                <Badge variant="outline">Instrumental</Badge>
+                                            )}
+                                        </div>
+                                        <p className="text-muted-foreground truncate text-xs">{track.prompt}</p>
                                 </div>
-                            )
 
+                                {/* Actions */}
+                                <div className="flex items-center gap-2">
+                                    <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className={`cursor-pointer ${track.published ? "border-red-200" : ""}`}>
+                                        {track.published ? "Unpublish" : "Publish"}
+                                    </Button>
+                                </div>
 
+                                </div>
+                            );
                     }
-                })) : <></>}
+                })
+            ):( 
+                <></>
+                )}
             </div>
         </div>
     </div>
