@@ -179,9 +179,14 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
                                 {/* Actions */}
                                 <div className="flex items-center gap-2">
                                     <Button 
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        
+                                    }}
                                     variant="outline" 
                                     size="sm" 
-                                    className={`cursor-pointer ${track.published ? "border-red-200" : ""}`}>
+                                    className={`cursor-pointer ${track.published ? "border-red-200" : ""}`}
+                                    >
                                         {track.published ? "Unpublish" : "Publish"}
                                     </Button>
                                 </div>
