@@ -1,11 +1,14 @@
 "use client"
 
-import { Loader2, Music, Play, RefreshCcw, Search, XCircle } from "lucide-react";
+import { Download, Loader2, MoreHorizontal, Music, Pencil, Play, RefreshCcw, Search, XCircle } from "lucide-react";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { getPlayUrl } from "~/actions/generation";
 import { Badge } from "../ui/badge";
+import { setPublishedStatus } from "~/actions/song";
+import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 export interface Track {
                 id: string;
@@ -179,9 +182,12 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
                                 {/* Actions */}
                                 <div className="flex items-center gap-2">
                                     <Button 
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation()
-                                        
+                                        await setPublishedStatus(
+                                            track.id, 
+                                            !track.published,
+                                        );
                                     }}
                                     variant="outline" 
                                     size="sm" 
@@ -189,6 +195,36 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
                                     >
                                         {track.published ? "Unpublish" : "Publish"}
                                     </Button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger>
+                                            <Button variant="ghost" size="icon">
+                                                <MoreHorizontal/>
+                                                </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent 
+                                        align="end" 
+                                        className="w-40">
+                                            <DropdownMenuItem 
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+                                                const playUrl = await getPlayUrl(track.id);
+                                                window.open(playUrl, "_blank");
+                                            }}
+                                            >
+                                        <Download className="mr-2"/> Download
+                                            </DropdownMenuItem>
+
+                                        <DropdownMenuItem 
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+                                                const playUrl = await getPlayUrl(track.id);
+                                                window.open(playUrl, "_blank");
+                                            }}
+                                            >
+                                                <Pencil className="mr-2"/> Rename
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
 
                                 </div>
