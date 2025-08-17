@@ -214,6 +214,8 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
                                         <Download className="mr-2"/> Download
                                             </DropdownMenuItem>
 
+                                        
+                                        
                                         <DropdownMenuItem 
                                             onClick={async (e) => {
                                                 e.stopPropagation();
@@ -221,7 +223,7 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
                                                 window.open(playUrl, "_blank");
                                             }}
                                             >
-                                                <Pencil className="mr-2"/> Rename
+                                            <Pencil className="mr-2"/> Rename
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
