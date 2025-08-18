@@ -1,14 +1,25 @@
 "use client";
 
-import { Music, Pause, Play, Volume2 } from "lucide-react";
+import { Download, MoreHorizontal, Music, Pause, Play, Sliders, Volume2 } from "lucide-react";
 import { usePlayerStore } from "~/stores/use-player-store";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { useState } from "react";
+import { Slider } from "./ui/slider";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 export default function SoundBar () {
     const { track } = usePlayerStore();
     const [isPlaying, setIsPlaying] = useState(false);
+    const [volume, setVolume] = useState([100]);
+    const [currentTime, setCurrentTime] = useState(0);
+
+    const formatTime = (time: number) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+
+        return `${minutes.toString().padStart(2,"0")}: ${seconds.toString().padStart(2,"0")} `;
+    };
 
     return (
     <div className="px-4 pb-2">
@@ -23,7 +34,7 @@ export default function SoundBar () {
                             src={track.artwork} 
                             /> 
                         ):( 
-                            <Music className="text-white" /> 
+                            <Music className="text-white h-4 w-4" /> 
                             )}
                     </div>
                     <div className="max-w-24 min-w-0 flex-1 md:max-w-full">
@@ -38,16 +49,49 @@ export default function SoundBar () {
                 {/*Centered Controls */}
                 <div className="absolute left-1/2 -translate-x-1/2">
                     <Button variant="ghost" size="icon">
-                        {isPlaying ? <Pause /> : <Play />}
+                        {isPlaying ? <Pause className="h-4 w-4"/> : <Play className="h-4 w-4" />}
                     </Button>
                 </div>
 
                 {/*<Additional controls*/}
                 <div className="flex items-center gap-1">
                     <div className="flex items-center gap-2">
-                        <Volume2 />
+                        <Volume2 className="h-4 w-4"/>
+                        <Slider 
+                        value={volume} 
+                        onValueChange={setVolume} 
+                        step={1}
+                        max={100}
+                        min={0} 
+                        className="w-16"
+                        />
                     </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="w-4 h-4"/>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40 ">
+                            <DropdownMenuItem onClick={() => {
+                                if (!track?.url) return;
+
+                                window.open(track?.url, "_blank");
+                            }}>
+                                <Download className="mr-2 h-4 w-4"/>
+                                Download
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
+            </div>
+            {/*Full width progress bar for Song*/}
+
+            <div className="flex items-center gap-1">
+                <span className="text-muted-foreground w-8 text-right text-[10px]">
+                    {formatTime(currentTime)}
+                </span>
+                <Sliders />
             </div>
         </div>
     </Card>
