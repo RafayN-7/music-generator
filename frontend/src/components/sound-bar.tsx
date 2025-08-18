@@ -4,7 +4,7 @@ import { Download, MoreHorizontal, Music, Pause, Play, Sliders, Volume2 } from "
 import { usePlayerStore } from "~/stores/use-player-store";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Slider } from "./ui/slider";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
@@ -13,6 +13,32 @@ export default function SoundBar () {
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState([100]);
     const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] =useState(0);
+    const audioRef = useRef<HTMLAudioElement>(null);
+
+    useEffect(() => {
+        if(audioRef.current && track?.url) {
+            setCurrentTime(0)
+            setDuration(0)
+
+            audioRef.current.src = track.url;
+            audioRef.current.load();
+
+            const playPromise = audioRef.current.play();
+            if(playPromise !== undefined) {
+                playPromise.then(() =>  {
+                    setIsPlaying(true);
+                }).catch((error) => {
+                    console.error("Playback failed:", error)
+                    setIsPlaying(false);
+                } )
+            }
+        }
+    }, [track])
+
+    const handleSeek = (value: number[]) => {
+        //TODO
+    };
 
     const formatTime = (time: number) => {
         const minutes = Math.floor(time / 60);
@@ -91,9 +117,20 @@ export default function SoundBar () {
                 <span className="text-muted-foreground w-8 text-right text-[10px]">
                     {formatTime(currentTime)}
                 </span>
-                <Sliders />
+                <Slider 
+                className="flex-1" 
+                value={[currentTime]} 
+                max={duration || 100} 
+                step={1} 
+                onValueChange={handleSeek} 
+                />
+                <span className="text-muted-foreground w-8 text-right text-[10px]">
+                    {formatTime(currentTime)}
+                </span>
             </div>
         </div>
+
+        <audio ref={audioRef} src={track?.url ?? ""} preload="metadata"/>
     </Card>
     </div>
     );
