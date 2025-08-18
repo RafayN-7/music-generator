@@ -1,11 +1,15 @@
 "use client";
 
-import { Music } from "lucide-react";
+import { Music, Pause, Play, Volume2 } from "lucide-react";
 import { usePlayerStore } from "~/stores/use-player-store";
 import { Card } from "./ui/card";
+import { Button } from "./ui/button";
+import { useState } from "react";
 
 export default function SoundBar () {
     const { track } = usePlayerStore();
+    const [isPlaying, setIsPlaying] = useState(false);
+
     return (
     <div className="px-4 pb-2">
     <Card className="px-4 pb-4 bg-background/60 relative w-full shrink-0 border-t py-0 backdrop-blur">
@@ -29,6 +33,19 @@ export default function SoundBar () {
                         <p className="text-muted-foreground truncate text-xs">
                             {track?.createdByUserName}
                         </p>    
+                    </div>
+                </div>
+                {/*Centered Controls */}
+                <div className="absolute left-1/2 -translate-x-1/2">
+                    <Button variant="ghost" size="icon">
+                        {isPlaying ? <Pause /> : <Play />}
+                    </Button>
+                </div>
+
+                {/*<Additional controls*/}
+                <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
+                        <Volume2 />
                     </div>
                 </div>
             </div>
