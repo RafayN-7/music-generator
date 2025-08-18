@@ -1,0 +1,34 @@
+"use client";
+
+import { Music } from "lucide-react";
+import { usePlayerStore } from "~/stores/use-player-store";
+import { Card } from "./ui/card";
+
+export default function SoundBar () {
+    const { track } = usePlayerStore();
+    return (
+    <div className="px-4 pb-2">
+    <Card className="px-4 pb-4 bg-background/60 relative w-full shrink-0 border-t py-0 backdrop-blur">
+        <div className="space-y-2 p-3">
+            <div className="flex items-center justify-between">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-purple-500 to-pink-500">
+                        {track?.artwork ? (
+                            <img 
+                            className="h-full w-full rounded-md object-cover" 
+                            src={track.artwork} 
+                            /> 
+                        ):( 
+                            <Music className="text-white"/> 
+                            )}
+                    </div>
+                    <div className="max-w-24 min-w-0 flex-1 md:max-w-full">
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Card>
+    </div>
+    );
+}
