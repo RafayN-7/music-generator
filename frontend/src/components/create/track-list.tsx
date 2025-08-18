@@ -48,8 +48,9 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
 
     const handleRefresh = async () => {
         setIsRefreshing(true)
-        router.refresh
-    }
+        router.refresh()
+        setTimeout(() => setIsRefreshing(false), 1000);
+    };
 
     const filteredTracks = tracks.filter((track) => 
         track.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -73,7 +74,7 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
                 disabled={isRefreshing} 
                 variant="outline" 
                 size="sm" 
-                onClick={() => {}}
+                onClick={handleRefresh}
                 >
                     {isRefreshing ?( 
                     <Loader2 className="mr-2 animate-spin"/>  
