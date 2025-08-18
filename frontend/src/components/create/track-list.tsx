@@ -6,9 +6,11 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { getPlayUrl } from "~/actions/generation";
 import { Badge } from "../ui/badge";
-import { setPublishedStatus } from "~/actions/song";
+import { renameSong, setPublishedStatus } from "~/actions/song";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { RenameDialog } from "./rename-dialog";
+import { useRouter } from "next/navigation";
 
 export interface Track {
                 id: string;
@@ -31,6 +33,7 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [loadingTrackId, setLoadingTrackId] = useState <string | null>(null);
     const [trackToRename, SetTrackToRename] = useState<Track | null>(null);
+    const router = useRouter()
 
     const handleTrackSelect = async (track: Track) => {
         if (loadingTrackId) return;
@@ -41,7 +44,12 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
         console.log(playUrl);
 
         //Play the song in the playbar
-    };
+    };  
+
+    const handleRefresh = async () => {
+        setIsRefreshing(true)
+        router.refresh
+    }
 
     const filteredTracks = tracks.filter((track) => 
         track.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -78,7 +86,8 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
 
             {/* Track list */}
             <div className="space-y-2">
-                {filteredTracks.length > 0 ? (filteredTracks.map((track) => {
+                {filteredTracks.length < 0 ? (
+                        filteredTracks.map((track) => {
                     switch (track.status) {
                         case "failed" : 
                         return (
@@ -197,7 +206,7 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
                                         {track.published ? "Unpublish" : "Publish"}
                                     </Button>
                                     <DropdownMenu>
-                                        <DropdownMenuTrigger>
+                                        <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" size="icon">
                                                 <MoreHorizontal/>
                                                 </Button>
@@ -220,8 +229,7 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
                                         <DropdownMenuItem 
                                             onClick={async (e) => {
                                                 e.stopPropagation();
-                                                const playUrl = await getPlayUrl(track.id);
-                                                window.open(playUrl, "_blank");
+                                                SetTrackToRename(track);
                                             }}
                                             >
                                             <Pencil className="mr-2"/> Rename
@@ -229,16 +237,30 @@ export function TrackList({tracks}: {tracks: Track[]} ) {
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
-
-                                </div>
-                            );
+                            </div>
+                        );
                     }
                 })
             ):( 
-                <></>
+                <div className="flex flex-col items-center justify-center pt-20 text-center">
+                    <Music className="text-muted-foreground h-10 w-10"/>
+                    <h2 className="mt-4 text-lg font-semibold">No Music Yet</h2>
+                    <p className="text-muted-foreground mt-1 text-sm">
+                        {searchQuery 
+                    ? "No tracks match your search." 
+                    : "Create your first song to get started."}
+                    </p>
+                </div>
                 )}
             </div>
         </div>
+        {trackToRename && (
+            <RenameDialog 
+            track={trackToRename} 
+            onClose={() => SetTrackToRename(null)} 
+            onRename={(trackId, newTitle) => renameSong(trackId, newTitle)}
+            />
+        )}
     </div>
     );
 }
