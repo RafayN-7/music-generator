@@ -19,7 +19,7 @@ export default function SoundBar () {
                             src={track.artwork} 
                             /> 
                         ):( 
-                            <Music className="text-white"/> 
+                            <Music className="text-white" /> 
                             )}
                     </div>
                     <div className="max-w-24 min-w-0 flex-1 md:max-w-full">
@@ -27,8 +27,8 @@ export default function SoundBar () {
                             {track?.title}
                         </p>
                         <p className="text-muted-foreground truncate text-xs">
-                            {track?.createdByUsername}
-                        </p>
+                            {track?.createdByUserName}
+                        </p>    
                     </div>
                 </div>
             </div>

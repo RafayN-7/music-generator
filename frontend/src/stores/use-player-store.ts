@@ -6,7 +6,7 @@ interface PlayerTrack {
     url: string | null;
     artwork: string | null;
     prompt: string | null;
-    createdByUsername: string | null;
+    createdByUserName: string | null;
 }
 
 interface PlayerState {
